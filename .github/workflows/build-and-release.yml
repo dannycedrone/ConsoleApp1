@@ -21,6 +21,8 @@ jobs:
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
         restore-keys: |
           ${{ runner.os }}-nuget
+    - name: Install dependencies
+      run: dotnet add package Newtonsoft.Json --version 12.0.1
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.1
       with:
