@@ -14,11 +14,21 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 6.0.x
+    - name: Cache
+      uses: actions/cache@v2
+      with:
+        path: /
+         # Look to see if there is a cache hit for the corresponding requirements file
+        key: ${{ runner.os }}-nuget-${{ hashFiles('packages.lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.1
       with:
         vs-prerelease: true
     - name: Restore Dependencies
+      if: 
+        steps.cache.outputs.cache-hit != 'true'
       run: dotnet restore ConsoleApp1/ConsoleApp1.csproj
     - name: Build
       run: msbuild ConsoleApp1/ConsoleApp1.csproj -r -p:Configuration=Release -p:RestorePackages=false -p:TargetFramework=net6.0-windows10.0.19041.0 /p:GenerateAppxPackageOnBuild=true
