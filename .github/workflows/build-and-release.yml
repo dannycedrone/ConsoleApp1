@@ -15,7 +15,7 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Print working directory
-      run: echo pwd
+      run: pwd
     - name: Cache
       uses: actions/cache@v2
       #
