@@ -1,0 +1,46 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+  
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.1
+      with:
+        vs-prerelease: true
+    - name: Restore Dependencies
+      run: dotnet restore ConsoleApp1/ConsoleApp1.csproj
+    - name: Build
+      run: msbuild ConsoleApp1/ConsoleApp1.csproj -r -p:Configuration=Release -p:RestorePackages=false -p:TargetFramework=net6.0-windows10.0.19041.0 /p:GenerateAppxPackageOnBuild=true
+    - name: Upload Windows Artifact
+      uses: actions/upload-artifact@v2.3.1
+      with:
+        name: ConsoleApp1
+        path: \a\ConsoleApp1\ConsoleApp1\ConsoleApp1\bin\Release\net6.0-windows10.0.19041.0\ConsoleApp1.exe
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.run_number }}
+        release_name: ${{ github.run_number }}
+    - name: Upload release asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: \a\ConsoleApp1\ConsoleApp1\ConsoleApp1\bin\Release\net6.0-windows10.0.19041.0\ConsoleApp1.exe
+        asset_name: ConsoleApp1.exe
+        asset_content_type: application/exe
