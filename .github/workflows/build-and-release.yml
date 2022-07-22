@@ -14,10 +14,14 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 6.0.x
+    #- name: Print working directory
+        #echo pwd
     - name: Cache
       uses: actions/cache@v2
+      #
       with:
-        path: /
+        path: ConsoleApp1/
+        #echo pwd
          # Look to see if there is a cache hit for the corresponding requirements file
         key: ${{ runner.os }}-nuget-${{ hashFiles('packages.lock.json') }}
         restore-keys: |
