@@ -17,6 +17,7 @@ jobs:
     - name: Print working directory
       run: pwd
     - name: Cache
+      id: testcache
       uses: actions/cache@v2
       #
       with:
@@ -32,7 +33,7 @@ jobs:
         vs-prerelease: true
     - name: Restore Dependencies
       if: 
-        steps.cache.outputs.cache-hit != 'true'
+        steps.testcache.outputs.cache-hit != 'true'
       run: dotnet restore ConsoleApp1/ConsoleApp1.csproj
     - name: Build
       run: msbuild ConsoleApp1/ConsoleApp1.csproj -r -p:Configuration=Release -p:RestorePackages=false -p:TargetFramework=net6.0-windows10.0.19041.0 /p:GenerateAppxPackageOnBuild=true
